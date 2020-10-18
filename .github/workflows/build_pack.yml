@@ -23,7 +23,7 @@ jobs:
       # Packs contents of src to .mcpack
       - uses: montudor/action-zip@v0.1.0
         with:
-          args: zip -qq -r $GITHUB_WORKSPACE/src WBHS-Minecraft-Resources_Testing.mcpack
+          args: cd $GITHUB_WORKSPACE/src ; zip -qq -r ../WBHS-Minecraft-Resources_Testing.mcpack .
 
       #Creates Release
       - name: Create Release
