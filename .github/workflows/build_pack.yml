@@ -7,8 +7,8 @@ name: Build Test MCPack
 on:
   push:
     branches: [ testing ]
-      tags: 
-        - 'v*.*.*'
+    tags: 
+      - 'v*.*.*'
 
 env:
   packName: wbhs-resources_testing.mcpack 
