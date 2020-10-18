@@ -8,6 +8,10 @@ on:
   push:
     branches: [ testing ]
 
+env:
+  packName: wbhs-resources_testing.mcpack 
+  srcDir: src 
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -17,9 +21,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      #Set mcpack name
-      - run: resPackName=wbhs-resources_testing.mcpack
-      
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
@@ -27,8 +28,8 @@ jobs:
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
-          directory: src/
-          filename: $resPackName
+          directory: $src/
+          filename: $packName
           type: zip
       
       #List directory
@@ -40,7 +41,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: mcpack
-          path: src/$resPackName
+          path: $src/$packName
           
       #Create release
       - name: Create Release
@@ -63,6 +64,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: src/$resPackName
-          asset_name: $resPackName
+          asset_path: $src/$packName
+          asset_name: $packName
           asset_content_type: application/zip
