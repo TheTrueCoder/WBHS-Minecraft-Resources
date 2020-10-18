@@ -31,3 +31,9 @@ jobs:
       - run: |
           ls
           ls src
+
+      #Save pack as Artifact
+      - uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: src/wbhs-resources_testing.mcpack
