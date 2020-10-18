@@ -1,0 +1,18 @@
+{
+    "format_version": 2,
+    "header": {
+      "description": "Testing texture pack for the recreation of Westlake Boys High School.",
+      "name": "WBHS Texture Pack Testing",
+      "uuid": "88cac1e3-33e3-469e-bed2-1cddc5366bbb",
+      "version": [1, 0, 0],
+      "min_engine_version": [1, 14, 0]
+    },
+    "modules": [
+      {
+        "description": "Testing texture pack for the recreation of Westlake Boys High School.",
+        "type": "resources",
+        "uuid": "1f7f3e5e-941b-4ee0-8ae3-0fe022555e09",
+        "version": [1, 0, 0]
+      }
+    ]
+  }
