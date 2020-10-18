@@ -51,7 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Test Release ${{ env.RELEASE_VERSION }}
+          release_name: Test Release ${{ steps.vars.outputs.tag }}
           body: This is an automatic build of the testing branch
           draft: true
           prerelease: true
