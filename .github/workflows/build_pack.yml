@@ -26,5 +26,8 @@ jobs:
         with:
           directory: src/
           filename: 'wbhs-resources_testing.mcpack'
+      
       #List directory
-      - run: ls
+      - run: |
+          ls
+          ls src
