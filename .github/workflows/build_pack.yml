@@ -28,7 +28,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           directory: src/
-          filename: 'wbhs-resources_testing.mcpack'
+          filename: $resPackName
           type: zip
       
       #List directory
