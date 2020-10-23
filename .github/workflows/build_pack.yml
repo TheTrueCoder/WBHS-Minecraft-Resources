@@ -15,11 +15,28 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  #Creates one release to add different packs to
+  make-release:
+    runs-on: ubuntu-latest
+    steps:
+       #Create release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Test Release ${{ github.ref }}
+          body: This is an automatic build of the testing branch
+          draft: true
+          prerelease: true
+     
+
   # This workflow contains a single job called "build"
   build-pack:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         resolution: [128, 64]
@@ -56,19 +73,6 @@ jobs:
           name: mcpack
           path: ${{env.srcDir}}/${{env.packName}}
           
-      #Create release
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Test Release ${{ github.ref }}
-          body: This is an automatic build of the testing branch
-          draft: true
-          prerelease: true
-     
       #Upload texture pack
       - name: Upload Release Asset
         id: upload-release-asset 
