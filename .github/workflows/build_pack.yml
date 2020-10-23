@@ -35,10 +35,13 @@ jobs:
           draft: true
           prerelease: true
 
-      - name: set environment variables
-        uses: allenevans/set-env@v1.0.0
+      - name: URL to file
+        run: ${{ steps.create_release.outputs.upload_url }} > upload_url
+
+      - uses: actions/upload-artifact@v2
         with:
-          GITHUB_UPLOAD_URL: ${{ steps.create_release.outputs.upload_url }}
+          name: upload_url
+          path: upload_url
 
   # This workflow contains a single job called "build"
   build-pack:
@@ -51,6 +54,15 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: upload_url
+
+      - name: Set URL var
+        run: |
+          cat upload_url > url
+          echo "github_upload_url=$url" >> $GITHUB_ENV
 
       #Scales images in texture pack
       - name: Image Resizer Inplace
@@ -74,7 +86,7 @@ jobs:
           ls
           ls src
 
-      - run: echo ${{env.GITHUB_UPLOAD_URL}}
+      - run: echo ${{env.github_upload_url}}
 
       #Save pack as Artifact
       - uses: actions/upload-artifact@v2
@@ -89,7 +101,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{env.GITHUB_UPLOAD_URL}}
+          upload_url: ${{env.github_upload_url}}
           asset_path: ${{env.srcDir}}/${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
           asset_name: ${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
           asset_content_type: application/zip
