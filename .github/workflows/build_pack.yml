@@ -10,7 +10,8 @@ on:
       - 'v*.*.*'
 
 env:
-  packName: wbhs-resources_testing.mcpack 
+  packName: wbhs-resources_testing
+  packExtension: mcpack
   srcDir: src 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -31,11 +32,13 @@ jobs:
           body: This is an automatic build of the testing branch
           draft: true
           prerelease: true
-     
+
+      - name: Export release upload URL
+        run: echo "GITHUB_UPLOAD_URL=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_ENV     
 
   # This workflow contains a single job called "build"
   build-pack:
-    # The type of runner that the job will run on
+    needs: make-release
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -80,7 +83,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: $GITHUB_UPLOAD_URL
           asset_path: ${{env.srcDir}}/${{env.packName}}
-          asset_name: ${{env.packName}}
+          asset_name: ${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
           asset_content_type: application/zip
