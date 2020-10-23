@@ -28,6 +28,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      #Scales images in texture pack
+      - name: Image Resizer Inplace
+        uses: xprilion/img-resizer-inplace@v1
+        with:
+          # Folder in which images are stored
+          target: src/textures/blocks
+          # New resolution for images
+          dimensions: ${{matrix.resolution}}
+
       # Packs contents of src to .mcpack
       - name: Archive Release
         uses: thedoctor0/zip-release@master
