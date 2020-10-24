@@ -1,0 +1,93 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build MCPack
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  push:
+    tags: 
+      - 'v*.*.*'
+  workflow_dispatch:
+
+env:
+  packName: wbhs-resources
+  packExtension: mcpack
+  srcDir: src 
+
+#mcpack name is ${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  #Creates one release to add different packs to
+  make-release:
+    name: Make release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+       #Create release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: 128px is the recommended resolution.
+          draft: true
+          prerelease: false
+
+  # This workflow contains a single job called "build"
+  build-pack:
+    name: Make MCPack
+    needs: make-release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        resolution: [128, 64]
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      #Scales images in texture pack
+      - name: Image Resizer Inplace
+        uses: xprilion/img-resizer-inplace@v1
+        with:
+          # Folder in which images are stored
+          target: src/textures/blocks
+          # New resolution for images
+          dimensions: ${{matrix.resolution}}
+
+      # Packs contents of src to .mcpack
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          directory: ${{env.srcDir}}/
+          filename: ${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
+          type: zip
+      
+      #List directory
+      - run: |
+          ls
+          ls src
+
+      #Save pack as Artifact
+      - uses: actions/upload-artifact@v2
+        with:
+          name: mcpack_${{matrix.resolution}}
+          path: ${{env.srcDir}}/${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
+          
+      #Upload texture pack
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.make-release.outputs.upload_url }}
+          asset_path: ${{env.srcDir}}/${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
+          asset_name: ${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
+          asset_content_type: application/zip
