@@ -61,7 +61,7 @@ jobs:
 
       - name: Set URL var
         run: |
-          url=$(cat upload_url)
+          url=$(cat upload_url | cut -d" " -f1)
           echo "github_upload_url=$url" >> $GITHUB_ENV
 
       #Scales images in texture pack
