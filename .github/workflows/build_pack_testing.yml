@@ -7,7 +7,7 @@ name: Build MCPack
 on:
   push:
     tags: 
-      - 'v*.*.*t'
+      - 't*.*.*'
   workflow_dispatch:
 
 env:
