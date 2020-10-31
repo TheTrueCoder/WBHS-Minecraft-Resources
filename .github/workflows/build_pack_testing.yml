@@ -7,15 +7,15 @@ name: Build MCPack
 on:
   push:
     tags: 
-      - 'v*.*.*'
+      - 'v*.*.*t'
   workflow_dispatch:
 
 env:
-  packName: wbhs-resources
+  packName: wbhs-resources-testing
   packExtension: mcpack
   srcDir: src
   configDir: pack-config
-  branch: main
+  branch: testing
 
 #mcpack name is ${{env.packName}}_${{matrix.resolution}}px.${{env.packExtension}}
 
@@ -38,9 +38,10 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
+            This is a beta resource pack.
             128px is the recommended resolution.
           draft: true
-          prerelease: false
+          prerelease: true
 
   # This workflow contains a single job called "build"
   build-pack:
